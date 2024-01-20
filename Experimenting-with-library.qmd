@@ -31,11 +31,14 @@ library(opendatatoronto)
 
 library_visits_raw_data <- read_csv("tpl-visits-annual-by-branch-2012-2022.csv")
 
-head(library_visits_raw_data)
+# head(library_visits_raw_data)
 
 library_visits_raw_data |>
-  summarise(average_visits = mean(Visits), 
+  summarise(year = Year, average_visits = mean(Visits), 
             .by = BranchCode) |>
-  arrange(-average_visits)
+  arrange(average_visits)
+
+library_visits_raw_data |>
+  arrange(BranchCode)
 ```
 
