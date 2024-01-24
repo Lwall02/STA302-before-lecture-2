@@ -5,7 +5,7 @@ author: Liam Wall
 thanks: "Code and data are available at: https://github.com/Lwall02/What-Are-We-Using-Libraries-For."
 date: today
 date-format: long
-abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+abstract: "This paper looks into four annual statistics released by the Toronto Public Library (TPL) system from 2012-2022 - visits, new registrations, circulation of materials, and computer sessions usage. It shows an almost predictable down-trend in library from 2012 to 2019 and a major hit to the TPL system during the COVID-19 pandemic. Follwowing the 2020 hit, the TPL began to bounceback but all of the statistics (bar perhaps one) do not recover to pre-pandemic levels. The only positive correlation in the entire paper is between new registrations and computer usage from 2012-2015."
 format: pdf
 toc: true
 number-sections: true
@@ -20,14 +20,38 @@ bibliography: references.bib
 library(tidyverse)
 library(knitr)
 library(patchwork)
+
+clean_data <- read_csv("/cloud/project/outputs/data/cleaned_combined_data.csv")
+
+
 ```
 
 
 # Introduction
 
-Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
+With the ever-increasing accessibility of publications, like books, magazines, and newspapers, to name a few, one can wonder what libraries are really used for nowadays. It is well-known that a library is a place to come to read and learn. There is an immensity of resources available at most public libraries across all of the world, including public records, films, local newspapers, computers, socializing areas, and of course publications. Despite the common thought that not many people go to libraries, it is still a strong belief that the absence of libraries would be a detriment to the surrounding community (PEW RESEARCH CITATION). 
+
+To a lot of people, the ability to access the internet is nothing more than sitting at their personal home computer or using their phone connected to their wifi or cellular service. However, one does not always remember there is a significant portion of the community that is not always fortunate enough to have this level of access. In today's world, this can be one the libraries single most important amenities; access to the internet. The Toronto Public Library (TPL) system offers free wifi at every branch and almost all of their 103 branches offer free computer stations (REFERNCE TO TPL WEBSITE). In this paper, I look at TPL information from 2012 to 2022 covering the number of annual visits, new registrations, circulation of materials (called circulations), and computer station usage (called a computer sessions). I wanted to find out why people are using the TPL, when it was most popular, what is increasing or decreasing, and how popular are libraries today compared to a decade ago.
+
+My findings show that there is a definitive decrease in every statistic from 2012 to 2022 except for new registrations. They show a decrease in yearly visitors, circulations, and computer sessions, however the number of new registrations per year has countered these trends, in fact the number of new registrations in 2022 is more than that of 2012. We can also see the large impact the COVID-19 pandemic had on the TPL with decreases in every statistic during 2020. Post-pandemic, the numbers in each of the four categories began to increase however, only new registrations were able to reach pre-pandemic levels by 2022.
+
+The Data section of this paper provides an explanation on the TPL data used in this paper and the steps that went into making this data usable and readable for a report. The Results sections discusses in greater detail the findings from the data by showing the trends I explained. The Discussion sections provides some information on the possible shortcomings of the analysis and other events that may have an effect on the findings. The Conclusion sections summarizes the findings from this paper. 
 
 # Data
+
+Data used in this paper was downloaded from the Open Data Toronto website (INSERT CITIATTION FOR ODT). I downloaded a total of five data sets published by the Toronto Public Library: Library Branch General Information (INSERT CITATION TO WEB PAGE), Library Visitors (INSERT CITATION TO WEB PAGE), Library Workstation Usage (INSERT CITATION TO WEB PAGE), Library Card Registrations (INSERT CITATION TO WEB PAGE), and Library Circulation (INSERT CITATION TO WEB PAGE). The data was worked with entirely on the open source programming language R (INSERT CITATION TO R). I used the following packages to clean and analyze the data: tidyverse (INSERT CITATION TO PACKAGE), ggplot2 (INSERT CITATION TO PACKAGE), patchwork (INSERT CITATION TO PACKAGE), knitr (INSERT CITATION TO PACKAGE), and kable (INSERT CITATION TO PACKAGE), dplyr (INSERT CITATION TO PACKAGE).
+
+## The Data Sets 
+
+I downloaded the five above mentioned data sets and in order to conduct some analysis I had to merge four of them into one tibble. The cleaning and merging of the data sets is explained below.
+
+It is important to note that there were 100 to 104 different TPL branches across the Greater Toronto Area each year from 2012 to 2022. Each branch is attached with a branch code that is two capital letters, for example the Lillian H. Smith Library located just below the University of Toronto is labeled LS. You will see these branch codes in table and graphs later in the paper.
+
+### The Library Branch General Information
+
+The Library Branch General Information data set was only used in two ways for this paper. It provided a key to attach a libraries branch code with its full name and address, and it separated the physical branches from the 'non-physical' branches. The physical branches are the libraries you can visit, the 'non-physical' libraries are services like a bookmobile or a virtual library. The 'non-physical' libraries are shown in (SHOW AND REFERNCE TABLE OF THE NONPHYSICAL LIBRARIES). 
+
+It is important to separate and remove the 'non-physical' libraries from all the data sets because they introduce very different values in each of the categories I am looking at. The 'non-physical' libraries recorded their visits, registrations, circulations, and computer sessions in different ways. For example, the visits would have been clicks to a website or number of visitors into a mobile library. In this paper I am focused on the popularity of the physical library and so this data does nto serve to tell me how a physical library is preforming.  
 
 # Results
 
@@ -66,10 +90,23 @@ summarised_data <- clean_data |>
     .by = year
   )
 
+num_branch1 <- clean_data |> 
+  count(branch_code) |>
+  arrange(n)
+
+num_branch_dropna <- clean_data |>
+  drop_na() |>
+  count(branch_code) |>
+  arrange(n)
+
+num_branch <- left_join(x = num_branch1, y = num_branch_dropna, join_by(branch_code == branch_code)) |>
+  kable(col.names = c("Branch Code", "# of Branches", "# of Branches after dropna()"))
+
+
 plot_mean_visits <- summarised_data |>
   ggplot(aes(x = year, y = mean_visits)) +
   geom_point(alpha = 0.5) + # geom_jitter(alpha = 0.5, width = 1, height = 1) +
-  theme_minimal() +
+  theme_bw() +
   labs(x = "Year", y = "Annual Visits") +
   xlim(2011, 2023) +
   theme(legend.position = "none")
@@ -77,7 +114,7 @@ plot_mean_visits <- summarised_data |>
 plot_mean_regis <- summarised_data |>
   ggplot(aes(x = year, y = mean_registrations)) +
   geom_point(alpha = 0.5) + # geom_jitter(alpha = 0.5, width = 1, height = 1) +
-  theme_minimal() +
+  theme_bw() +
   labs(x = "Year", y = "New Registrations") +
   xlim(2011, 2023) +
   theme(legend.position = "none")
@@ -85,7 +122,7 @@ plot_mean_regis <- summarised_data |>
 plot_mean_circ <- summarised_data |>
   ggplot(aes(x = year, y = mean_circulation)) +
   geom_point(alpha = 0.5) + # geom_jitter(alpha = 0.5, width = 1, height = 1) +
-  theme_minimal() +
+  theme_bw() +
   labs(x = "Year", y = "Circulations") +
   xlim(2011, 2023) +
   theme(legend.position = "none")
@@ -93,7 +130,7 @@ plot_mean_circ <- summarised_data |>
 plot_mean_sessions <- summarised_data |>
   ggplot(aes(x = year, y = mean_sessions)) +
   geom_point(alpha = 0.5) + # geom_jitter(alpha = 0.5, width = 1, height = 1) +
-  theme_minimal() +
+  theme_bw() +
   labs(x = "Year", y = "Computer Sessions") +
   xlim(2011, 2023) +
   theme(legend.position = "none")

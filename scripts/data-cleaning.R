@@ -30,5 +30,23 @@ raw_data <- left_join(x = raw_vis_regis_circ, y = raw_computer_usage, by =
 clean_data <- clean_names(raw_data) |>
   select(year, branch_code, visits, registrations, circulation, sessions)
 
+clean_data_1 <- clean_data |>
+  arrange(branch_code) |>
+  slice(-(133:143))
+
+clean_data_2 <- clean_data_1 |>
+  arrange(branch_code) |>
+  slice(-(656:666))
+
+clean_data_3 <- clean_data_2 |>
+  arrange(branch_code) |>
+  slice(-(731:741))
+
+clean_data_4 <- clean_data_3 |>
+  arrange(branch_code) |>
+  slice(-(885:895))
+
+clean_data <- clean_data_4
+
 #### Save data ####
 write_csv(clean_data, "outputs/data/cleaned_combined_data.csv")
