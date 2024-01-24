@@ -19,6 +19,7 @@ bibliography: references.bib
 
 library(tidyverse)
 library(knitr)
+library(patchwork)
 ```
 
 
@@ -29,6 +30,77 @@ Quarto enables you to weave together content and executable code into a finished
 # Data
 
 # Results
+
+```{r}
+#| label: tbl-cleaneddata
+#| tbl-cap: "Sample of Cleaned Data displaying all four of the test statistics"
+#| echo: false
+#| message: false
+#| warning: false
+
+clean_data |>
+  ggplot(aes(x = year, y = visits, color = branch_code )) +
+  geom_jitter(alpha = 0.5, width = 1, height = 1) +
+  theme_minimal() +
+  labs(x = "Year", y = "Annual Visits", color = "Branchcode") +
+  xlim(2011, 2023) +
+  theme(legend.position = "none") 
+# + geom_smooth(method = lm, color = "black", se = FALSE)
+
+clean_data |>
+  ggplot(aes(x = year, y = registrations, color = branch_code )) +
+  geom_jitter(alpha = 0.5, width = 1, height = 1) +
+  theme_minimal() +
+  labs(x = "Year", y = "New Registrations", color = "Branchcode") +
+  xlim(2011, 2023) +
+  theme(legend.position = "none") 
+# + geom_smooth(method = lm, color = "black", se = FALSE)
+
+summarised_data <- clean_data |>
+  drop_na() |>
+  summarise(
+    mean_visits = mean(visits),
+    mean_registrations = mean(registrations),
+    mean_circulation = mean(circulation),
+    mean_sessions = mean(sessions), 
+    .by = year
+  )
+
+plot_mean_visits <- summarised_data |>
+  ggplot(aes(x = year, y = mean_visits)) +
+  geom_point(alpha = 0.5) + # geom_jitter(alpha = 0.5, width = 1, height = 1) +
+  theme_minimal() +
+  labs(x = "Year", y = "Annual Visits") +
+  xlim(2011, 2023) +
+  theme(legend.position = "none")
+
+plot_mean_regis <- summarised_data |>
+  ggplot(aes(x = year, y = mean_registrations)) +
+  geom_point(alpha = 0.5) + # geom_jitter(alpha = 0.5, width = 1, height = 1) +
+  theme_minimal() +
+  labs(x = "Year", y = "New Registrations") +
+  xlim(2011, 2023) +
+  theme(legend.position = "none")
+
+plot_mean_circ <- summarised_data |>
+  ggplot(aes(x = year, y = mean_circulation)) +
+  geom_point(alpha = 0.5) + # geom_jitter(alpha = 0.5, width = 1, height = 1) +
+  theme_minimal() +
+  labs(x = "Year", y = "Circulations") +
+  xlim(2011, 2023) +
+  theme(legend.position = "none")
+
+plot_mean_sessions <- summarised_data |>
+  ggplot(aes(x = year, y = mean_sessions)) +
+  geom_point(alpha = 0.5) + # geom_jitter(alpha = 0.5, width = 1, height = 1) +
+  theme_minimal() +
+  labs(x = "Year", y = "Computer Sessions") +
+  xlim(2011, 2023) +
+  theme(legend.position = "none")
+  
+plot_mean_visits + plot_mean_regis + plot_mean_circ + plot_mean_sessions
+```
+
 
 # Discussion
 
