@@ -1,13 +1,39 @@
 ---
-title: "ExperimentWithData"
-format: html
+title: "My title"
+subtitle: "My subtitle if needed"
+author: Liam Wall
+thanks: "Code and data are available at: https://github.com/Lwall02/What-Are-We-Using-Libraries-For."
+date: today
+date-format: long
+abstract: "First sentence. Second sentence. Third sentence. Fourth sentence."
+format: pdf
+toc: true
+number-sections: true
+bibliography: references.bib
 ---
 
-## Quarto
+```{r}
+#| include: false
+#| warning: false
+#| message: false
+
+library(tidyverse)
+library(knitr)
+```
+
+
+# Introduction
 
 Quarto enables you to weave together content and executable code into a finished document. To learn more about Quarto see <https://quarto.org>.
 
-## Running Code
+# Data
+
+# Results
+
+# Discussion
+
+# Conclusion
+
 
 When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
 
@@ -24,21 +50,6 @@ You can add options to executable code like this
 
 The `echo: false` option disables the printing of code (only output is displayed).
 
-```{r}
-# install.packages("opendatatoronto")
+# Appendix
 
-library(opendatatoronto)
-
-library_visits_raw_data <- read_csv("tpl-visits-annual-by-branch-2012-2022.csv")
-
-# head(library_visits_raw_data)
-
-library_visits_raw_data |>
-  summarise(year = Year, average_visits = mean(Visits), 
-            .by = BranchCode) |>
-  arrange(average_visits)
-
-library_visits_raw_data |>
-  arrange(BranchCode)
-```
-
+# References
