@@ -5,7 +5,7 @@ author: Liam Wall
 thanks: "Code and data are available at: https://github.com/Lwall02/What-Are-We-Using-Libraries-For."
 date: today
 date-format: long
-abstract: "This paper looks into four annual statistics released by the Toronto Public Library (TPL) system from 2012-2022 - visits, new registrations, circulation of materials, and computer sessions usage. It shows an almost predictable down-trend in library from 2012 to 2019 and a major hit to the TPL system during the COVID-19 pandemic. Follwowing the 2020 hit, the TPL began to bounceback but all of the statistics (bar perhaps one) do not recover to pre-pandemic levels. The only positive correlation in the entire paper is between new registrations and computer usage from 2012-2015."
+abstract: "This paper looks into four annual statistics released by the Toronto Public Library (TPL) system from 2012-2022 - number of visits, new registrations, circulation of materials, and computer usage. This report displays a down-trend in each of these statistics from 2012 to 2019 and a major hit to the TPL system during the COVID-19 pandemic. Follwowing the 2020 hit, the TPL did improve, but each of the statistics, except one, did not recover to pre-pandemic levels. The only consistently upward trend in the entire paper is the number of new registrations."
 format: pdf
 toc: true
 number-sections: true
@@ -23,19 +23,18 @@ library(patchwork)
 
 clean_data <- read_csv("/cloud/project/outputs/data/cleaned_combined_data.csv")
 
-
 ```
 
 
 # Introduction
 
-With the ever-increasing accessibility of publications, like books, magazines, and newspapers, to name a few, one can wonder what libraries are really used for nowadays. It is well-known that a library is a place to come to read and learn. There is an immensity of resources available at most public libraries across all of the world, including public records, films, local newspapers, computers, socializing areas, and of course publications. Despite the common thought that not many people go to libraries, it is still a strong belief that the absence of libraries would be a detriment to the surrounding community [@pewresearch]. 
+With the ever-increasing accessibility of publications, like books, magazines, and newspapers, to name a few, you might wonder what libraries are really used for nowadays. It is well-known that a library is a place to come to read and learn. There is an immensity of resources available at most public libraries across all of the world, including public records, films, local newspapers, computers, socializing areas, and all kinds of publications. Despite the common thought that not many people go to libraries, it is still a strong belief that the absence of libraries would be a detriment to its surrounding community [@pewresearch]. 
 
-To a lot of people, the ability to access the internet is nothing more than sitting at their personal home computer or using their phone connected to their wifi or cellular service. However, one does not always remember there is a significant portion of the community that is not always fortunate enough to have this level of access. In today's world, this can be one the libraries single most important amenities; access to the internet. The Toronto Public Library (TPL) system offers free wifi at every branch and almost all of their 103 branches offer free computer stations [@torontopubliclibrary]. In this paper, I look at TPL information from 2012 to 2022 covering the number of annual visits, new registrations, circulation of materials (called circulations), and computer station usage (called a computer sessions). I wanted to find out why people are using the TPL, when it was most popular, what is increasing or decreasing, and how popular are libraries today compared to a decade ago.
+To a lot of people, the ability to access the internet is nothing more than sitting down with their personal computer or using their phone connected to their wifi or cellular service. However, they may not consider that a significant portion of the community is not always fortunate enough to have this level of access. In today's world, access to the internet can be one of the single most important amenities. The Toronto Public Library (TPL) system offers free wifi at every branch and almost all of their 112 branches offer free computer stations [@torontopubliclibrary]. In this paper, I look at TPL information from 2012 to 2022 covering the number of annual visits, new registrations, circulation of materials (called circulations), and computer station usage (called a computer sessions). I sought to find out why people are using the TPL, what amenties are increasing or decreasing, and how popular are libraries today compared to a decade ago.
 
-My findings show that there is a definitive decrease in every statistic from 2012 to 2022 except for new registrations. They show a decrease in yearly visitors, circulations, and computer sessions, however the number of new registrations per year has countered these trends, in fact the number of new registrations in 2022 is more than that of 2012. We can also see the large impact the COVID-19 pandemic had on the TPL with decreases in every statistic during 2020. Post-pandemic, the numbers in each of the four categories began to increase however, only new registrations were able to reach pre-pandemic levels by 2022.
+My findings show that there is a definitive decrease in every statistic from 2012 to 2022 except for new registrations. They show a decrease in yearly visitors, circulations, and computer sessions, however the number of new registrations per year has countered these trends, in fact the number of new registrations in 2022 is more than that of 2012. We can also see the large impact the COVID-19 pandemic had on the TPL with major decreases in every statistic in 2020. Post-pandemic, the numbers in each of the four categories began to increase however, only new registrations were able to reach pre-pandemic levels by 2022.
 
-The Data section of this paper provides an explanation on the TPL data used in this paper and the steps that went into making this data usable and readable for a report. The Results sections discusses in greater detail the findings from the data by showing the trends I explained. The Discussion sections provides some information on the possible shortcomings of the analysis and other events that may have an effect on the findings. The Conclusion sections summarizes the findings from this paper. 
+The Data section of this paper provides an explanation on the TPL data used in this paper and the steps that went into making this data usable and readable for a report. The Results sections displays the trends explained above, and explains how they were reached. The Discussion sections provides greater detail on the trends explained above and some information on the possible shortcomings of the analysis. The Conclusion sections summarizes the findings from this paper. 
 
 \newpage
 
@@ -45,9 +44,9 @@ Data used in this paper was downloaded from the Open Data Toronto website [@open
 
 ## The Data Sets 
 
-I downloaded the five above mentioned data sets and in order to conduct some analysis I had to merge four of them into one tibble. The cleaning and merging of the data sets is explained below.
+I downloaded the five above mentioned data sets and in order to conduct my analysis I merged four of them into one table The cleaning and merging of the data sets is explained below.
 
-It is important to note that there were 100 to 104 different TPL branches across the Greater Toronto Area each year from 2012 to 2022. Each branch is attached with a branch code that is two capital letters. For example, the Lillian H. Smith Library located just below the University of Toronto is labeled LS. You will see these branch codes in tables and graphs later in the paper.
+It is important to note that there was usable data from 96 to 100 different TPL branches across the Greater Toronto Area each year from 2012 to 2022 (further explanation below). Each branch is attached with a branch code that is two capital letters. For example, the Lillian H. Smith Library located just South of the University of Toronto is labeled LS. You will see these branch codes in tables and graphs later in the paper.
 
 ### The Library Branch General Information
 
@@ -76,12 +75,12 @@ It is important to separate and remove the 'non-physical' libraries from all the
 
 ### The Library Card Registration, Circulation, Visits, and Workstation Usage
 
-These four data sets, The Library Card Registration, Circulation, Visits, and Workstation Usage, serve as the essential data for this paper. As they are also released by the TPL system, they follow the exact same branch code organization. Each of the four data sets gives data for each branch code for every year from 2012 to 2022. They are very similar data sets to each other in that there is the year, branch code, and number of the value that is to be shown (visits, registrations, circulations, or sessions).
+These four data sets, The Library Card Registration, Circulation, Visits, and Workstation Usage, serve as the essential data for this paper. As they are also released by the TPL system, they follow the exact same branch code organization. Each of the four data sets gives data for each branch code for every year from 2012 to 2022. They are similar data sets to each other in that are the year the year, branch code, and number of the value that is to be shown (visits, registrations, circulations, or sessions).
 
 ## Cleaning the Data
 
-The first step of cleaning the data so that I could analyse it in an efficient way was to combine the visits, registrations, circulations, and sessions, into one table according the year and branch code. In that way all the information stays according to the correct library it was taken from and the correct year. 
-The second step was to use the clean_name() function. The third step was to remove the 'non-physical' branches so that the data I analyse is from real, physical libraries only. A sample of final table with each of the four statistics aligned with branch code and year is found in @tbl-cleandatatable. (SHOW A TABLE OF THE COMPLETE INFO I USED). An explanation of the four variables is found in Results.
+The first step of cleaning the data so that I could analyse it in an efficient way was to combine the visits, registrations, circulations, and sessions, into one table according the year and branch code. In that way all the information stays aligned with the correct library branch it was taken from and the correct year. 
+The second step was to use the clean_names() function in the janitor package. The third step was to remove the 'non-physical' branches so that the data I analyse is from physical libraries only. A sample of final table with each of the four statistics aligned with branch code and year is found in @tbl-cleandatatable. An explanation of the four variables is found in Results.
 
 ```{r}
 #| label: tbl-cleandatatable
@@ -101,9 +100,9 @@ clean_data |>
 
 # Results
 
-First, before I get into the results, I will explain what each variable is that you will see in this section. The 'Visitors' describes the number of visitors per year at a certain library branch. The 'Registrations' describes the number of library cards registered at a certain library branch per year. The 'Circulation' describes the number of materials that were checked out and returned during the year at a certain library branch. The 'Sessions' describes the number of computer sessions at a library's public workstation per year. A computer session lasts a duration of at least 15 seconds.
+First, I will explain what each variable is that you will see in this section. The 'Visitors' describes the number of visitors per year at a library branch. The 'Registrations' describes the number of library cards registered at a library branch per year. The 'Circulation' describes the number of materials that were checked out and returned during the year at a library branch. The 'Sessions' describes the number of computer sessions at a library's public workstation per year. A computer session lasts a duration of at least 15 seconds.
 
-Second, the number of library branches did not stay the same every year. There were anywhere from 100 to 104 library branches, as mentioned in the introduction, however there was only ever 96 to 100 active physical branches. This can be seen in @fig-numbranches.
+Second, the number of library branches did not stay the same every year. There were anywhere from 100 to 104 library branches in the datatsets downloaded from Open Data Toronto, however there was only ever 96 to 100 active physical branches. This can be seen in @fig-numbranches.
 
 ```{r}
 #| label: fig-numbranches
@@ -127,7 +126,7 @@ clean_data |>
 
 \newpage
 
-The results of this analysis followed from looking at the trends of the data over the years. The first step was to try and see how the libraries performed each year based on the four variables listed above. The four scatter plots in @fig-scattertotaldata show the count of each variable from 2012 - 2022. In this format it is hard to see whether visits are increasing or decreasing, especially from 2012 - 2019, and the same goes for the other three variables. The biggest takeaway from this view is that the COVID-19 pandemic did effect the libraries in 2020. It is hard to say exactly how much the libraries were effected but we can see that the visits, registrations, circulations, and sessions, have no very large values in 2020. 
+The results of this analysis followed from looking at the trends of the data over the years 2012 - 2022. The first step was to try and see how the libraries performed each year based on the four variables listed above. The four scatter plots in @fig-scattertotaldata show the count of every variable from 2012 - 2022. In this format it is hard to see whether visits are increasing or decreasing, especially from 2012 - 2019, and the same goes for the other three variables. The biggest takeaway from this view is that the COVID-19 pandemic did effect the libraries in 2020. It is hard to say exactly how much the libraries were effected by looking @fig-scattertotaldata, but we can see that the visits, registrations, circulations, and sessions, have no large values in 2020. 
 
 ```{r}
 #| label: fig-scattertotaldata
@@ -173,7 +172,7 @@ sp1 + sp2 + sp3 + sp4
 
 \newpage
 
-In @fig-scattertotaldata, it is hard to determine any kind of trend among the visits, registrations, circulations, and computer sessions. As stated above, it especially hard to do so from 2012 - 2019 because there is so many points crowding the same space. In order to look at the trends of this data, we look at the averages of each variable. This is visible in @fig-averagedata.
+In @fig-scattertotaldata, it is hard to determine any kind of trend among the visits, registrations, circulations, and computer sessions from 2012 - 2019 because there is so many points crowding the same space. In order to look closer at the trends of thesse variables, I look at the averages of each variable over all the branches each year. This is visible in @fig-averagedata.
 
 
 ```{r}
@@ -227,9 +226,12 @@ plot_mean_sessions <- summarised_data |>
   
 plot_mean_visits + plot_mean_regis + plot_mean_circ + plot_mean_sessions
 ```
-As you can more clearly see in @fig-averagedata, yearly visits has been steadily decreasing across all TPL. Further, yearly circulations has really been declining since 2012. When looking at the new registrations and computer usage there is more storied trend. Surprisingly, despite less visitors and less materials being checked out, computer sessions and new registrations were increasing from 2012 - 2015. From 2016 onwards, computer sessions have trended down quite significantly while new registrations has remained trending upwards. 
 
-Once COVID-19 struck in 2020, every variable took quite a hit. In @fig-averagedata, we can see every variable has gone near the x-axis at 2020. We can also see that from 2020 - 2022, visitors, circulations, and especially new registrations have trended upwards. In fact, new registrations is averaging the same amount in 2022 as it was for nearly all of 2012 - 2019. Average computer sessions, however, has remained very low compared to its previous averages. 
+As you can more clearly see in @fig-averagedata, yearly visits has been steadily decreasing across all TPL from 2012 to 2022. More drastically, yearly circulations has also been decreasing since 2012. When looking at the new registrations and computer usage there is a different trend. Surprisingly, despite less visitors and less materials being checked out, computer sessions and new registrations were increasing from 2012 - 2015. From 2016 onwards, computer sessions have decreased significantly while new registrations have remained increasing. 
+
+Once COVID-19 struck in 2020, every variable took quite a hit. In @fig-averagedata, we can see every variable has dropped to near the x-axis in 2020. More specifically, from 2012 to 2020 average yearly visits have dropped by 71%, new registrations dropped by 56%, circulation dropped by 66%, and sessions dropped by 84%, averaging a 69% loss in all four statistics. 
+
+After 2020, during 2020 - 2022, visitors, circulations, and especially new registrations have increased. In fact, new registrations has increased by 10% since 2012. Average computer sessions, however, has remained very low compared to its previous averages. Comparing 2020 to 2022, visits have increased by 70%, new registrations by 147%, circulations increased by 50%, and sessions increased by 43%. Keeping in mind that in 2020, circulation previously decreased by 66% compared its annual numbers in 2012, whereas sessions had decreased 84% compared to 2012. 
 
 \newpage
 
