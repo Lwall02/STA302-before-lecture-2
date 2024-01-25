@@ -1,5 +1,5 @@
 ---
-title: "My title"
+title: "Trends in Toronto Public Libraries: A Study of 2012-2022 Toronto Public Library Data"
 subtitle: "My subtitle if needed"
 author: Liam Wall
 thanks: "Code and data are available at: https://github.com/Lwall02/What-Are-We-Using-Libraries-For."
@@ -37,6 +37,8 @@ My findings show that there is a definitive decrease in every statistic from 201
 
 The Data section of this paper provides an explanation on the TPL data used in this paper and the steps that went into making this data usable and readable for a report. The Results sections discusses in greater detail the findings from the data by showing the trends I explained. The Discussion sections provides some information on the possible shortcomings of the analysis and other events that may have an effect on the findings. The Conclusion sections summarizes the findings from this paper. 
 
+\newpage
+
 # Data
 
 Data used in this paper was downloaded from the Open Data Toronto website (INSERT CITIATTION FOR ODT). I downloaded a total of five data sets published by the Toronto Public Library: Library Branch General Information (INSERT CITATION TO WEB PAGE), Library Visitors (INSERT CITATION TO WEB PAGE), Library Workstation Usage (INSERT CITATION TO WEB PAGE), Library Card Registrations (INSERT CITATION TO WEB PAGE), and Library Circulation (INSERT CITATION TO WEB PAGE). The data was worked with entirely on the open source programming language R (INSERT CITATION TO R). I used the following packages to clean and analyze the data: tidyverse (INSERT CITATION TO PACKAGE), ggplot2 (INSERT CITATION TO PACKAGE), patchwork (INSERT CITATION TO PACKAGE), knitr (INSERT CITATION TO PACKAGE), and kable (INSERT CITATION TO PACKAGE), dplyr (INSERT CITATION TO PACKAGE).
@@ -45,40 +47,141 @@ Data used in this paper was downloaded from the Open Data Toronto website (INSER
 
 I downloaded the five above mentioned data sets and in order to conduct some analysis I had to merge four of them into one tibble. The cleaning and merging of the data sets is explained below.
 
-It is important to note that there were 100 to 104 different TPL branches across the Greater Toronto Area each year from 2012 to 2022. Each branch is attached with a branch code that is two capital letters, for example the Lillian H. Smith Library located just below the University of Toronto is labeled LS. You will see these branch codes in table and graphs later in the paper.
+It is important to note that there were 100 to 104 different TPL branches across the Greater Toronto Area each year from 2012 to 2022. Each branch is attached with a branch code that is two capital letters. For example, the Lillian H. Smith Library located just below the University of Toronto is labeled LS. You will see these branch codes in tables and graphs later in the paper.
 
 ### The Library Branch General Information
 
-The Library Branch General Information data set was only used in two ways for this paper. It provided a key to attach a libraries branch code with its full name and address, and it separated the physical branches from the 'non-physical' branches. The physical branches are the libraries you can visit, the 'non-physical' libraries are services like a bookmobile or a virtual library. The 'non-physical' libraries are shown in (SHOW AND REFERNCE TABLE OF THE NONPHYSICAL LIBRARIES). 
-
-It is important to separate and remove the 'non-physical' libraries from all the data sets because they introduce very different values in each of the categories I am looking at. The 'non-physical' libraries recorded their visits, registrations, circulations, and computer sessions in different ways. For example, the visits would have been clicks to a website or number of visitors into a mobile library. In this paper I am focused on the popularity of the physical library and so this data does nto serve to tell me how a physical library is preforming.  
-
-# Results
+The Library Branch General Information data set was only used in two ways for this paper. It provided a key to attach a libraries branch code with its full name and address, and it separated the physical branches from the 'non-physical' branches. The physical branches are the libraries you can visit, the 'non-physical' libraries are services like a bookmobile or a virtual library. The 'non-physical' libraries are shown in @tbl-nonphysicalbranches. (SHOW AND REFERNCE TABLE OF THE NONPHYSICAL LIBRARIES). 
 
 ```{r}
-#| label: tbl-cleaneddata
-#| tbl-cap: "Sample of Cleaned Data displaying all four of the test statistics"
+#| label: tbl-nonphysicalbranches
+#| tbl-cap: "This shows the 12 non-physical branches as of 2023 along with their TPL given name"
+#| tbl-cap-location: bottom
 #| echo: false
 #| message: false
 #| warning: false
 
+raw_gen_info <- read_csv("/cloud/project/inputs/data/tpl-branch-general-information-2023.csv")
+
+raw_gen_info |>
+  filter(PhysicalBranch == 0) |>
+  select(BranchCode, BranchName, PhysicalBranch) |>
+  kable(col.names = c("Branch Code", "Branch Name", "Physical Branch (1 - Yes/ 0 - No)"),
+        booktabs = TRUE,
+        linesep = "")
+```
+
+
+It is important to separate and remove the 'non-physical' libraries from all the data sets because they introduce very different values in each of the categories I am looking at. The 'non-physical' libraries recorded their visits, registrations, circulations, and computer sessions in different ways. For example, the visits would have been clicks to a website or number of visitors into a mobile library. In this paper, I am focused on the popularity of the physical library and so this data does not serve to tell me how a physical library is performing.  
+
+### The Library Card Registration, Circulation, Visits, and Workstation Usage
+
+These four data sets, The Library Card Registration, Circulation, Visits, and Workstation Usage, serve as the essential data for this paper. As they are also released by the TPL system, they follow the exact same branch code organization. Each of the four data sets gives data for each branch code for every year from 2012 to 2022. They are very similar data sets to each other in that there is the year, branch code, and number of the value that is to be shown (visits, registrations, circulations, or sessions).
+
+## Cleaning the Data
+
+The first step of cleaning the data so that I could analyse it in an efficient way was to combine the visits, registrations, circulations, and sessions, into one table according the year and branch code. In that way all the information stays according to the correct library it was taken from and the correct year. 
+The second step was to use the clean_name() function. The third step was to remove the 'non-physical' branches so that the data I analyse is from real, physical libraries only. A sample of final table with each of the four statistics aligned with branch code and year is found in @tbl-cleandatatable. (SHOW A TABLE OF THE COMPLETE INFO I USED). An explanation of the four variables is found in Results.
+
+```{r}
+#| label: tbl-cleandatatable
+#| tbl-cap: "This shows 10 rows of the final table used for analysis. It contains every branches information for each year from 2012-2022 organized such that the most visited library per year is at the top"
+#| tbl-cap-location: bottom
+#| echo: false
+#| message: false
+#| warning: false
 clean_data |>
+  arrange(year, -visits) |>
+  slice(1:10) |>
+  kable(col.names = c("Year", "Branch Code", "Visits", "Registrations", "Circulations", "Sessions"),
+        booktabs = TRUE,
+        linesep = "")
+```
+
+
+# Results
+
+First, before I get into the results, I will explain what each variable is that you will see in this section. The 'Visitors' describes the number of visitors per year at a certain library branch. The 'Registrations' describes the number of library cards registered at a certain library branch per year. The 'Circulation' describes the number of materials that were checked out and returned during the year at a certain library branch. The 'Sessions' describes the number of computer sessions at a library's public workstation per year. A computer session lasts a duration of at least 15 seconds.
+
+Second, the number of library branches did not stay the same every year. There were anywhere from 100 to 104 library branches, as mentioned in the introduction, however there was only ever 96 to 100 active physical branches. This can be seen in @fig-numbranches.
+
+```{r}
+#| label: fig-numbranches
+#| fig-cap: "This shows the variation in the number of library branches each year"
+#| fig-cap-location: bottom
+#| echo: false
+#| warning: false
+
+
+clean_data |>
+  count(year) |>
+  ggplot(aes(x = year, y = n)) + 
+  geom_line(linetype = "dashed") +
+  geom_point() +
+  theme_classic() +
+  labs(title = "Number of Active Toronto Public Libraries") +
+  xlab("Year") +
+  ylab("Number Open") + 
+  xlim(2012, 2023)
+```
+
+\newpage
+
+The results of this analysis followed from looking at the trends of the data over the years. The first step was to try and see how the libraries performed each year based on the four variables listed above. The four scatter plots in @fig-scattertotaldata show the count of each variable from 2012 - 2022. In this format it is hard to see whether visits are increasing or decreasing, especially from 2012 - 2019, and the same goes for the other three variables. The biggest takeaway from this view is that the COVID-19 pandemic did effect the libraries in 2020. It is hard to say exactly how much the libraries were effected but we can see that the visits, registrations, circulations, and sessions, have no very large values in 2020. 
+
+```{r}
+#| label: fig-scattertotaldata
+#| fig-cap: "A visual of all the data used for this analysis, organized by year. Each color represents a value for a library branch"
+#| fig-align: 'center'
+#| echo: false
+#| warning: false
+
+sp1 <- clean_data |> 
   ggplot(aes(x = year, y = visits, color = branch_code )) +
-  geom_jitter(alpha = 0.5, width = 1, height = 1) +
+  geom_jitter(alpha = 0.3, width = 0.5, height = 0.5) +
   theme_minimal() +
   labs(x = "Year", y = "Annual Visits", color = "Branchcode") +
   xlim(2011, 2023) +
   theme(legend.position = "none") 
-# + geom_smooth(method = lm, color = "black", se = FALSE)
 
-clean_data |>
+sp2 <- clean_data |>
   ggplot(aes(x = year, y = registrations, color = branch_code )) +
-  geom_jitter(alpha = 0.5, width = 1, height = 1) +
+  geom_jitter(alpha = 0.3, width = 0.5, height = 0.5) +
   theme_minimal() +
   labs(x = "Year", y = "New Registrations", color = "Branchcode") +
   xlim(2011, 2023) +
   theme(legend.position = "none") 
-# + geom_smooth(method = lm, color = "black", se = FALSE)
+
+sp3 <- clean_data |>
+  ggplot(aes(x = year, y = circulation, color = branch_code )) +
+  geom_jitter(alpha = 0.3, width = 0.5, height = 0.5) +
+  theme_minimal() +
+  labs(x = "Year", y = "Circulations", color = "Branchcode") +
+  xlim(2011, 2023) +
+  theme(legend.position = "none") 
+
+sp4 <- clean_data |>
+  ggplot(aes(x = year, y = sessions, color = branch_code )) +
+  geom_jitter(alpha = 0.3, width = 0.5, height = 0.5) +
+  theme_minimal() +
+  labs(x = "Year", y = "Computer Sessions", color = "Branchcode") +
+  xlim(2011, 2023) +
+  theme(legend.position = "none") 
+
+sp1 + sp2 + sp3 + sp4
+```
+
+\newpage
+
+In @fig-scattertotaldata, it is hard to determine any kind of trend among the visits, registrations, circulations, and computer sessions. As stated above, it especially hard to do so from 2012 - 2019 because there is so many points crowding the same space. In order to look at the trends of this data, we look at the averages of each variable. This is visible in @fig-averagedata.
+
+
+```{r}
+#| label: fig-averagedata
+#| fig-cap: "A visual of the average of each variable from 2012 - 2022. We can more clearly see the negative trends of each variable."
+#| echo: false
+#| message: false
+#| warning: false
 
 summarised_data <- clean_data |>
   drop_na() |>
@@ -90,30 +193,17 @@ summarised_data <- clean_data |>
     .by = year
   )
 
-num_branch1 <- clean_data |> 
-  count(branch_code) |>
-  arrange(n)
-
-num_branch_dropna <- clean_data |>
-  drop_na() |>
-  count(branch_code) |>
-  arrange(n)
-
-num_branch <- left_join(x = num_branch1, y = num_branch_dropna, join_by(branch_code == branch_code)) |>
-  kable(col.names = c("Branch Code", "# of Branches", "# of Branches after dropna()"))
-
-
 plot_mean_visits <- summarised_data |>
   ggplot(aes(x = year, y = mean_visits)) +
-  geom_point(alpha = 0.5) + # geom_jitter(alpha = 0.5, width = 1, height = 1) +
+  geom_point(alpha = 0.5, color = "red") + # geom_jitter(alpha = 0.5, width = 1, height = 1) +
   theme_bw() +
   labs(x = "Year", y = "Annual Visits") +
   xlim(2011, 2023) +
-  theme(legend.position = "none")
+  theme(legend.position = "none") 
 
 plot_mean_regis <- summarised_data |>
   ggplot(aes(x = year, y = mean_registrations)) +
-  geom_point(alpha = 0.5) + # geom_jitter(alpha = 0.5, width = 1, height = 1) +
+  geom_point(alpha = 0.5, color = "blue") + # geom_jitter(alpha = 0.5, width = 1, height = 1) +
   theme_bw() +
   labs(x = "Year", y = "New Registrations") +
   xlim(2011, 2023) +
@@ -121,7 +211,7 @@ plot_mean_regis <- summarised_data |>
 
 plot_mean_circ <- summarised_data |>
   ggplot(aes(x = year, y = mean_circulation)) +
-  geom_point(alpha = 0.5) + # geom_jitter(alpha = 0.5, width = 1, height = 1) +
+  geom_point(alpha = 0.5, color = "purple") + # geom_jitter(alpha = 0.5, width = 1, height = 1) +
   theme_bw() +
   labs(x = "Year", y = "Circulations") +
   xlim(2011, 2023) +
@@ -129,7 +219,7 @@ plot_mean_circ <- summarised_data |>
 
 plot_mean_sessions <- summarised_data |>
   ggplot(aes(x = year, y = mean_sessions)) +
-  geom_point(alpha = 0.5) + # geom_jitter(alpha = 0.5, width = 1, height = 1) +
+  geom_point(alpha = 0.5, color = "orange") + # geom_jitter(alpha = 0.5, width = 1, height = 1) +
   theme_bw() +
   labs(x = "Year", y = "Computer Sessions") +
   xlim(2011, 2023) +
@@ -137,27 +227,15 @@ plot_mean_sessions <- summarised_data |>
   
 plot_mean_visits + plot_mean_regis + plot_mean_circ + plot_mean_sessions
 ```
+As you can more clearly see in @fig-averagedata, yearly visits has been steadily decreasing across all TPL. Further, yearly circulations has really been declining since 2012. When looking at the new registrations and computer usage there is more storied trend. Surprisingly, despite less visitors and less materials being checked out, computer sessions and new registrations were increasing from 2012 - 2015. From 2016 onwards, computer sessions have trended down quite significantly while new registrations has remained trending upwards. 
 
+Once COVID-19 struck in 2020, every variable took quite a hit. In @fig-averagedata, we can see every variable has gone near the x-axis at 2020. We can also see that from 2020 - 2022, visitors, circulations, and especially new registrations have trended upwards. In fact, new registrations is averaging the same amount in 2022 as it was for nearly all of 2012 - 2019. Average computer sessions, however, has remained very low compared to its previous averages. 
+
+\newpage
 
 # Discussion
 
 # Conclusion
-
-
-When you click the **Render** button a document will be generated that includes both content and the output of embedded code. You can embed code like this:
-
-```{r}
-1 + 1
-```
-
-You can add options to executable code like this 
-
-```{r}
-#| echo: false
-2 * 2
-```
-
-The `echo: false` option disables the printing of code (only output is displayed).
 
 # Appendix
 
