@@ -3,8 +3,6 @@
 # Author: Liam Wall
 # Date: 23 January 2024
 # Contact: liam.wall@mail.utoronto.ca
-# Pre-requisites: [...UPDATE THIS...]
-# Any other information needed? [...UPDATE THIS...]
 
 #### Workspace setup ####
 library(tidyverse)
