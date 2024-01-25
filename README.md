@@ -7,6 +7,8 @@ to determine when they were most used by the public and answer why that was the 
 I look at the number of visits, books that went in and out, new registrations, and the 
 amount of computer sessions across Toronto's 103 public libraries (as of 2023 as this number does change). Each data set was obtained from OpenDataToronto. 
 
+LLMs WERE NOT USED AT ALL IN MAKING THIS REPORT.
+
 ## File Structure
 
 The repo is structured as:
